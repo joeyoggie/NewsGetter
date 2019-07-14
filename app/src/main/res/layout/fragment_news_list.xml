@@ -5,11 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".view.ui.NewsListFragment">
 
-    <ListView
-        android:id="@+id/news_listview"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        tools:listitem="@layout/list_item_news"/>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/news_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:listitem="@layout/list_item_news"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </FrameLayout>

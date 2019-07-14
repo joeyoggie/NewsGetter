@@ -10,15 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joey.seamlabstask.R;
 import com.joey.seamlabstask.Utils;
@@ -41,11 +40,11 @@ public class NewsListFragment extends Fragment {
 
     @BindView(R.id.news_listview)
     ListView newsListView;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout refreshLayout;
 
     SearchView mSearchView;
-
     NewsItemAdapter newsItemAdapter;
-
     NewsViewModel viewModel;
 
     public NewsListFragment() {
@@ -78,9 +77,21 @@ public class NewsListFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
 
-        subscribeUi(viewModel.getProjectListObservable());
+        refreshNews();
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshNews();
+                refreshLayout.setRefreshing(false);
+            }
+        });
 
         return view;
+    }
+
+    private void refreshNews(){
+        subscribeUi(viewModel.getProjectListObservable());
     }
 
     private void subscribeUi(LiveData<List<NewsItem>> liveData) {
@@ -138,9 +149,10 @@ public class NewsListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        /*if(id == R.id.action_search) {
-
-        }*/
+        if(id == R.id.action_refresh) {
+            refreshNews();
+            refreshLayout.setRefreshing(false);
+        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -1,13 +1,7 @@
 package com.joey.seamlabstask.view.ui;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.joey.seamlabstask.R;
@@ -43,6 +39,8 @@ public class NewsItemFragment extends Fragment {
     ImageView imageView;
     @BindView(R.id.news_item_content_textview)
     TextView contentTextView;
+    @BindView(R.id.news_item_share_imageview)
+    ImageView shareImageView;
 
     private NewsItem newsItem;
 
@@ -80,6 +78,18 @@ public class NewsItemFragment extends Fragment {
         timestampTextView.setText(""+Utils.getTimeStringDateHoursMinutes(Utils.getTimestamp(newsItem.getTimestamp().replace("T", " "))));
         contentTextView.setText(""+newsItem.getContent());
         Glide.with(getActivity()).load(newsItem.getUrlToImage()).into(imageView);
+
+        shareImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String shareBody = getActivity().getResources().getString(R.string.share_message, newsItem.getTitle()) + "\n\n" + newsItem.getUrl();
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                //sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
+            }
+        });
 
         return view;
     }
