@@ -195,7 +195,7 @@ public class Utils {
         return timeString;
     }
 
-    private static SimpleDateFormat simpleDateFormatServer; //2019-04-14 10:29:23
+    private static SimpleDateFormat simpleDateFormatServer; //2019-07-14T10:29:23Z
     public static long getTimestamp(String serverTimestamp){
         long timestamp = 0;
         if(simpleDateFormatServer == null) {

@@ -1,10 +1,12 @@
-package com.joey.seamlabstask.data.model;
+package com.joey.seamlabstask.data.db.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.joey.seamlabstask.data.db.entities.NewsItem;
 
 import java.util.List;
 
@@ -20,6 +22,9 @@ public interface NewsItemDao {
 
     @Insert(onConflict = REPLACE)
     void insertAll(NewsItem... newsItems);
+
+    @Query("delete FROM newsitem")
+    void deleteAll();
 
     @Delete
     void delete(NewsItem newsItem);

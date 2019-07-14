@@ -8,7 +8,7 @@ public class Constants {
     //url constants
     private static final String DOMAIN_URl = "https://newsapi.org/v2";
 
-    public static final String GET_NEWS_URL = DOMAIN_URl + "/top-headlines?" + "country=eg&apiKey=" + Constants.NEWS_API_TOKEN;
+    public static final String GET_NEWS_URL = DOMAIN_URl + "/top-headlines" + "?country=us&apiKey=" + Constants.NEWS_API_TOKEN;
 
 
     public static final String PARAMETER_NEXT_PAGE_URL = "next_page_url";

@@ -4,14 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.room.Room;
-
-import com.joey.seamlabstask.data.AppDatabase;
-
 public class MyApp extends Application {
     private static MyApp mInstance;
-
-    private static AppDatabase mDatabase;
 
 
     @Override
@@ -34,16 +28,5 @@ public class MyApp extends Application {
     public static SharedPreferences getShardPrefs(){
         SharedPreferences prefs = mInstance.getSharedPreferences(Constants.PACKAGE_NAME, Context.MODE_PRIVATE);
         return prefs;
-    }
-
-    public static AppDatabase initDB(){
-        if(mDatabase != null){
-            return mDatabase;
-        }else{
-            mDatabase = Room.databaseBuilder(MyApp.getInstance(), AppDatabase.class, Constants.DB_NAME)
-                    .allowMainThreadQueries().
-                            build();
-            return mDatabase;
-        }
     }
 }
