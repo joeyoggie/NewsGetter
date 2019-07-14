@@ -12,4 +12,6 @@
     <string name="share_using">Share using</string>
 
     <string name="refresh">Refresh</string>
+
+    <string name="no_internet">No internet connection, please try again later</string>
 </resources>

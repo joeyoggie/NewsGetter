@@ -77,24 +77,43 @@ public class NewsListFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
 
-        refreshNews();
+        loadNews();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshNews();
-                refreshLayout.setRefreshing(false);
             }
         });
 
         return view;
     }
 
-    private void refreshNews(){
-        subscribeUi(viewModel.getProjectListObservable());
+    private void loadNews(){
+        observeUI(viewModel.getProjectListObservable());
     }
 
-    private void subscribeUi(LiveData<List<NewsItem>> liveData) {
+    private void searchNews(String query){
+        observeUI(viewModel.getFilteredProjectListObservable(query));
+    }
+
+    private void refreshNews(){
+        new Utils.InternetChecker(getActivity(), new Utils.InternetChecker.OnConnectionCallback() {
+            @Override
+            public void onConnectionSuccess() {
+                loadNews();
+                refreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onConnectionFail(String errorMsg) {
+                Utils.showToast(getActivity(), Utils.getString(getActivity(), R.string.no_internet), false);
+                refreshLayout.setRefreshing(false);
+            }
+        }).execute();
+    }
+
+    private void observeUI(LiveData<List<NewsItem>> liveData) {
         // Update the list when the data changes
         liveData.observe(this, new Observer<List<NewsItem>>() {
             @Override
@@ -103,12 +122,7 @@ public class NewsListFragment extends Fragment {
                     //mBinding.setIsLoading(false);
                     newsItemAdapter = new NewsItemAdapter(getActivity(), myProducts, getFragmentManager());
                     newsListView.setAdapter(newsItemAdapter);
-                } else {
-                    //mBinding.setIsLoading(true);
                 }
-                // espresso does not know how to wait for data binding's loop so we execute changes
-                // sync.
-                //mBinding.executePendingBindings();
             }
         });
     }
@@ -133,7 +147,7 @@ public class NewsListFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                subscribeUi(viewModel.getFilteredProjectListObservable(newText));
+                searchNews(newText);
                 return false;
             }
         });
@@ -151,7 +165,6 @@ public class NewsListFragment extends Fragment {
         int id = item.getItemId();
         if(id == R.id.action_refresh) {
             refreshNews();
-            refreshLayout.setRefreshing(false);
         }
 
         return super.onOptionsItemSelected(item);
