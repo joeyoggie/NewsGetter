@@ -52,21 +52,33 @@
                     android:textSize="16sp"/>
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/news_item_timestamp_textview"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/news_item_content_layout"
-                android:textColor="@color/blackColor"/>
+                android:layout_below="@id/news_item_content_layout">
+                <TextView
+                    android:id="@+id/news_item_timestamp_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/blackColor"/>
+
+                <ImageView
+                    android:id="@+id/news_item_share_imageview"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_share" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/news_item_content_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_below="@id/news_item_timestamp_textview"
+                android:layout_below="@id/layout"
                 android:textAlignment="center"
                 android:textColor="@color/blackColor"
                 android:textSize="16sp"/>

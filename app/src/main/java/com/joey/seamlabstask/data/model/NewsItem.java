@@ -7,4 +7,5 @@ public interface NewsItem {
     String getContent();
     String getUrlToImage();
     String getTimestamp();
+    String getUrl();
 }

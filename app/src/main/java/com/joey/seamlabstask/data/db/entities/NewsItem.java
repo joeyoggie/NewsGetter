@@ -25,6 +25,9 @@ public class NewsItem implements com.joey.seamlabstask.data.model.NewsItem {
     @ColumnInfo(name = "publishedAt")
     @SerializedName("publishedAt")
     private String timestamp;
+    @ColumnInfo(name = "url")
+    @SerializedName("url")
+    private String url;
 
     public NewsItem(){
         this.id = 0;
@@ -33,6 +36,7 @@ public class NewsItem implements com.joey.seamlabstask.data.model.NewsItem {
         this.content = "";
         this.urlToImage = "";
         this.timestamp = "";
+        this.url = "";
     }
 
     public long getId() {
@@ -81,5 +85,13 @@ public class NewsItem implements com.joey.seamlabstask.data.model.NewsItem {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

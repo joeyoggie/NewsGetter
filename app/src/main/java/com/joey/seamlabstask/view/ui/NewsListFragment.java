@@ -10,15 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.joey.seamlabstask.R;
 import com.joey.seamlabstask.Utils;
@@ -41,11 +40,11 @@ public class NewsListFragment extends Fragment {
 
     @BindView(R.id.news_listview)
     ListView newsListView;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout refreshLayout;
 
     SearchView mSearchView;
-
     NewsItemAdapter newsItemAdapter;
-
     NewsViewModel viewModel;
 
     public NewsListFragment() {
@@ -78,12 +77,43 @@ public class NewsListFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
 
-        subscribeUi(viewModel.getProjectListObservable());
+        loadNews();
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshNews();
+            }
+        });
 
         return view;
     }
 
-    private void subscribeUi(LiveData<List<NewsItem>> liveData) {
+    private void loadNews(){
+        observeUI(viewModel.getProjectListObservable());
+    }
+
+    private void searchNews(String query){
+        observeUI(viewModel.getFilteredProjectListObservable(query));
+    }
+
+    private void refreshNews(){
+        new Utils.InternetChecker(getActivity(), new Utils.InternetChecker.OnConnectionCallback() {
+            @Override
+            public void onConnectionSuccess() {
+                loadNews();
+                refreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onConnectionFail(String errorMsg) {
+                Utils.showToast(getActivity(), Utils.getString(getActivity(), R.string.no_internet), false);
+                refreshLayout.setRefreshing(false);
+            }
+        }).execute();
+    }
+
+    private void observeUI(LiveData<List<NewsItem>> liveData) {
         // Update the list when the data changes
         liveData.observe(this, new Observer<List<NewsItem>>() {
             @Override
@@ -92,12 +122,7 @@ public class NewsListFragment extends Fragment {
                     //mBinding.setIsLoading(false);
                     newsItemAdapter = new NewsItemAdapter(getActivity(), myProducts, getFragmentManager());
                     newsListView.setAdapter(newsItemAdapter);
-                } else {
-                    //mBinding.setIsLoading(true);
                 }
-                // espresso does not know how to wait for data binding's loop so we execute changes
-                // sync.
-                //mBinding.executePendingBindings();
             }
         });
     }
@@ -122,7 +147,7 @@ public class NewsListFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                subscribeUi(viewModel.getFilteredProjectListObservable(newText));
+                searchNews(newText);
                 return false;
             }
         });
@@ -138,9 +163,9 @@ public class NewsListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        /*if(id == R.id.action_search) {
-
-        }*/
+        if(id == R.id.action_refresh) {
+            refreshNews();
+        }
 
         return super.onOptionsItemSelected(item);
     }
