@@ -9,8 +9,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -19,6 +23,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.joey.seamlabstask.BuildConfig;
 import com.joey.seamlabstask.R;
 import com.joey.seamlabstask.Utils;
 import com.joey.seamlabstask.data.db.entities.NewsItem;
@@ -42,6 +52,9 @@ public class NewsListFragment extends Fragment {
     ListView newsListView;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
+
+    TextView remoteConfigTextView;
+    Button updateButton;
 
     SearchView mSearchView;
     NewsItemAdapter newsItemAdapter;
@@ -75,6 +88,16 @@ public class NewsListFragment extends Fragment {
         MainActivity.setActionBarTitle(Utils.getString(getActivity(), R.string.news), getResources().getColor(R.color.whiteColor));
         setHasOptionsMenu(true);
 
+        remoteConfigTextView = view.findViewById(R.id.remote_config_textview);
+        updateButton = view.findViewById(R.id.update_button);
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getLatestValue();
+            }
+        });
+
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
 
         loadNews();
@@ -87,6 +110,38 @@ public class NewsListFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getLatestValue(){
+        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .setMinimumFetchIntervalInSeconds(0)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+
+        mFirebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if(task.isSuccessful()){
+                    String url = mFirebaseRemoteConfig.getString("DOMAIN_URL");
+                    remoteConfigTextView.setText("" + url);
+
+
+                    boolean updated = task.getResult();
+                    if(updated){
+                        Toast.makeText(getActivity(), "Fetch and activate succeeded", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity(), "Fetch and activate failed. Exception: " + task.getException(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "getLastFetchStatus: " + mFirebaseRemoteConfig.getInfo().getLastFetchStatus(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "getFetchTimeMillis: " + mFirebaseRemoteConfig.getInfo().getFetchTimeMillis(), Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(getActivity(), "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void loadNews(){

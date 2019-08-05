@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "13905879231",
+    "firebase_url": "https://newsgetter-a04f7.firebaseio.com",
+    "project_id": "newsgetter-a04f7",
+    "storage_bucket": "newsgetter-a04f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13905879231:android:3959aa56d4bb9c36",
+        "android_client_info": {
+          "package_name": "com.joey.seamlabstask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13905879231-uqku6s775de91nr1qmtob3pfb47h38ro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joey.seamlabstask",
+            "certificate_hash": "d985084fd81332eea1024bf63b208be802ca9da8"
+          }
+        },
+        {
+          "client_id": "13905879231-f2unu3kphd978e4tqdbar0s789s26gjk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_hhtdvrboeHGbnnqGrKzJd8pRrAN4_2o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13905879231-f2unu3kphd978e4tqdbar0s789s26gjk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
